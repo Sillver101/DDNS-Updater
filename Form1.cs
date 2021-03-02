@@ -31,27 +31,49 @@ namespace DDNS_Updater
             }
             else
             {
+                if (string.IsNullOrEmpty(txtPassword.Text))
+                {
+                    string message = "Please input a Password";
+                    MessageBox.Show(message);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(txtUsername.Text))
+                    {
+                        string message = "Please input a Username";
+                        MessageBox.Show(message);
+                    }
+                    else
+                    {
+                        Program.UpdPWord = txtPassword.Text;
+                        Program.UpdUsrName = txtUsername.Text;
+                    }
+
+                }
                 Program.Intervalsec = Convert.ToInt32(txtUpdate.Text);
                 Program.Intervalms = Program.Intervalsec * 1000;
                 UpdateTimer.Interval = Program.Intervalms;
             }
             txtUpdate.Text = string.Empty;
-            //lblPubIP.Text = Convert.ToString(UpdateTimer.Interval);
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
 
-            //externIP = GetUserIPAddress();
             Program.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
-            //Program.externIP = (new Regex(@"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")).Matches(Program.externIP)[0].ToString();
             lblPubIP.Text = Program.externIP;
+            WebClient webClient = new WebClient();
+            Program.URI = "http://" + Program.UpdUsrName + ":" + Program.UpdPWord + "@dyn.srtech.org.za/?myip=" + Program.externIP;
+            Stream stream = webClient.OpenRead(Program.URI);
+            //webClient.Credentials = new NetworkCredential(Program.UpdUsrName, Program.UpdPWord);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Program.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
             lblPubIP.Text = Program.externIP;
+            Program.URI = "http://dyn.srtech.org.za/?myip=" + Program.externIP;
+            label3.Text = Program.URI;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -61,12 +83,42 @@ namespace DDNS_Updater
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            UpdateTimer.Enabled = true;
+            if (string.IsNullOrEmpty (Program.UpdUsrName))
+            {
+                string message = "Please Check the Settings";
+                MessageBox.Show(message);
+            }
+            else
+            {
+                UpdateTimer.Enabled = true;
+            }
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             UpdateTimer.Enabled = false;
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_DoubleClick(object sender, EventArgs e)
+        {
+            label3.Visible = true;
+            button1.Visible = true;
+        }
+
+        private void label3_DoubleClick(object sender, EventArgs e)
+        {
+            label3.Visible = false;
+            button1.Visible = false;
         }
     }
 }
