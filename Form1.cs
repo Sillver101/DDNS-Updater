@@ -11,6 +11,7 @@ using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Net.Http;
+using System.Diagnostics;
 
 
 
@@ -56,6 +57,9 @@ namespace DDNS_Updater
                 UpdateTimer.Interval = Program.Intervalms;
             }
             txtUpdate.Text = string.Empty;
+
+            Debug.WriteLine(Program.UpdPWord);
+            Debug.WriteLine(Program.UpdUsrName);
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -64,21 +68,28 @@ namespace DDNS_Updater
             Program.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
             lblPubIP.Text = Program.externIP;
             WebClient webClient = new WebClient();
-            //Program.URI = "http://" + Program.UpdUsrName + ":" + Program.UpdPWord + "@dyn.srtech.org.za:8080/?myip=" + Program.externIP;
             Program.URI = "http://@dyn.srtech.org.za";
-            WebRequest request = WebRequest.Create(Program.URI);
-            string authInfo = Program.UpdUsrName + ":" + Program.UpdPWord;
-            authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
-            request.Headers.Add("Authorization", "Basic " + authInfo);
-            request.ContentType = "application/json";
-            request.Method = WebRequestMethods.Http.Get;
-            request.Proxy = null;
-            HttpWebResponse httpWebResponse = (HttpWebResponse)request.GetResponse();
-            HttpWebResponse response = httpWebResponse;
-            Stream stream = response.GetResponseStream();
-            StreamReader streamreader = new StreamReader(stream);
-            string s = streamreader.ReadToEnd();
-            lblUpdate_Output.Text = s;
+            Program.AuthString = Convert.ToBase64String(Encoding.ASCII.GetBytes(Program.UpdUsrName + ":" + Program.UpdPWord));
+            Debug.WriteLine(Program.URI);
+            webClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+            webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", Program.AuthString);
+            Stream stream = webClient.OpenRead(Program.URI);
+
+
+            //Program.URI = "http://@dyn.srtech.org.za";
+            //WebRequest request = WebRequest.Create(Program.URI);
+            //string authInfo = Program.UpdUsrName + ":" + Program.UpdPWord;
+            //authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+            //request.Headers.Add("Authorization", "Basic " + authInfo);
+            //request.ContentType = "application/json";
+            //request.Method = WebRequestMethods.Http.Get;
+            //request.Proxy = null;
+            //HttpWebResponse httpWebResponse = (HttpWebResponse)request.GetResponse();
+            //HttpWebResponse response = httpWebResponse;
+            //Stream stream = response.GetResponseStream();
+            //StreamReader streamreader = new StreamReader(stream);
+            //string s = streamreader.ReadToEnd();
+            //lblUpdate_Output.Text = s;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -134,6 +145,11 @@ namespace DDNS_Updater
         {
             label3.Visible = false;
             button1.Visible = false;
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
