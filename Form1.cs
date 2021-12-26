@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Net.Http;
 
 
 
@@ -63,16 +64,30 @@ namespace DDNS_Updater
             Program.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
             lblPubIP.Text = Program.externIP;
             WebClient webClient = new WebClient();
-            Program.URI = "http://" + Program.UpdUsrName + ":" + Program.UpdPWord + "@dyn.srtech.org.za/?myip=" + Program.externIP;
-            Stream stream = webClient.OpenRead(Program.URI);
-            //webClient.Credentials = new NetworkCredential(Program.UpdUsrName, Program.UpdPWord);
+            //Program.URI = "http://" + Program.UpdUsrName + ":" + Program.UpdPWord + "@dyn.srtech.org.za:8080/?myip=" + Program.externIP;
+            Program.URI = "http://@dyn.srtech.org.za";
+            WebRequest request = WebRequest.Create(Program.URI);
+            string authInfo = Program.UpdUsrName + ":" + Program.UpdPWord;
+            authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+            request.Headers.Add("Authorization", "Basic " + authInfo);
+            request.ContentType = "application/json";
+            request.Method = WebRequestMethods.Http.Get;
+            request.Proxy = null;
+            HttpWebResponse httpWebResponse = (HttpWebResponse)request.GetResponse();
+            HttpWebResponse response = httpWebResponse;
+            Stream stream = response.GetResponseStream();
+            StreamReader streamreader = new StreamReader(stream);
+            string s = streamreader.ReadToEnd();
+            lblUpdate_Output.Text = s;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            label3.Text = "";
             Program.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
             lblPubIP.Text = Program.externIP;
-            Program.URI = "http://dyn.srtech.org.za/?myip=" + Program.externIP;
+            WebClient webClient = new WebClient();
+            Program.URI = "http://" + Program.UpdUsrName + ":" + Program.UpdPWord + "@dyn.srtech.org.za";
             label3.Text = Program.URI;
         }
 

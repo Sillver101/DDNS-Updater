@@ -44,6 +44,7 @@ namespace DDNS_Updater
             this.label5 = new System.Windows.Forms.Label();
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
+            this.lblUpdate_Output = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblPubIP
@@ -172,11 +173,21 @@ namespace DDNS_Updater
             this.txtPassword.Size = new System.Drawing.Size(100, 20);
             this.txtPassword.TabIndex = 12;
             // 
+            // lblUpdate_Output
+            // 
+            this.lblUpdate_Output.AutoSize = true;
+            this.lblUpdate_Output.Location = new System.Drawing.Point(128, 38);
+            this.lblUpdate_Output.Name = "lblUpdate_Output";
+            this.lblUpdate_Output.Size = new System.Drawing.Size(48, 13);
+            this.lblUpdate_Output.TabIndex = 13;
+            this.lblUpdate_Output.Text = "Updated";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblUpdate_Output);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtUsername);
             this.Controls.Add(this.label5);
@@ -214,6 +225,7 @@ namespace DDNS_Updater
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtUsername;
         private System.Windows.Forms.TextBox txtPassword;
+        private System.Windows.Forms.Label lblUpdate_Output;
     }
 }
 
