@@ -85,19 +85,19 @@ namespace DDNS_Updater.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int Intervalsec {
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int IntervalMin {
             get {
-                return ((int)(this["Intervalsec"]));
+                return ((int)(this["IntervalMin"]));
             }
             set {
-                this["Intervalsec"] = value;
+                this["IntervalMin"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("300000")]
         public int Intervalms {
             get {
                 return ((int)(this["Intervalms"]));
@@ -110,12 +110,12 @@ namespace DDNS_Updater.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int count {
+        public int randomcount {
             get {
-                return ((int)(this["count"]));
+                return ((int)(this["randomcount"]));
             }
             set {
-                this["count"] = value;
+                this["randomcount"] = value;
             }
         }
     }

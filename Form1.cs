@@ -49,20 +49,22 @@ namespace DDNS_Updater
                     {
                         Properties.Settings.Default.UpdPWord = txtPassword.Text;
                         Properties.Settings.Default.UpdUsrName = txtUsername.Text;
+                        pnlsettings.Visible = false;
                     }
 
                 }
-                Properties.Settings.Default.Intervalsec = Convert.ToInt32(txtUpdate.Text);
+                Properties.Settings.Default.IntervalMin = Convert.ToInt32(txtUpdate.Text);
                 //Update in seconds for Debugging Uncomment
-                //Properties.Settings.Default.Intervalms = Properties.Settings.Default.Intervalsec * 1000;
+                //Properties.Settings.Default.Intervalms = Properties.Settings.Default.IntervalMin * 1000;
                 //update in min for Production uncomment
-                Properties.Settings.Default.Intervalms = Properties.Settings.Default.Intervalsec * 60000;
+                Properties.Settings.Default.Intervalms = Properties.Settings.Default.IntervalMin * 60000;
                 UpdateTimer.Interval = Properties.Settings.Default.Intervalms;
             }
             txtUpdate.Text = string.Empty;
-            Debug.WriteLine(Properties.Settings.Default.UpdPWord);
-            Debug.WriteLine(Properties.Settings.Default.UpdUsrName);
+            //Debug.WriteLine(Properties.Settings.Default.UpdPWord);
+            //Debug.WriteLine(Properties.Settings.Default.UpdUsrName);
             Properties.Settings.Default.Save();
+            
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -73,9 +75,9 @@ namespace DDNS_Updater
             //Properties.Settings.Default.URI = "http://@srtdyn.co.za"; Uncomment if Broken
             Properties.Settings.Default.URI = "http://srtdyn.co.za"; //Comment if Broken
             Properties.Settings.Default.AuthString = Convert.ToBase64String(Encoding.ASCII.GetBytes(Properties.Settings.Default.UpdUsrName + ":" + Properties.Settings.Default.UpdPWord));
-            Debug.WriteLine(Properties.Settings.Default.URI);
-            Properties.Settings.Default.count = Properties.Settings.Default.count + 1;
-            Debug.WriteLine(Properties.Settings.Default.count);
+            //Debug.WriteLine(Properties.Settings.Default.URI);
+            Properties.Settings.Default.randomcount = Properties.Settings.Default.randomcount + 1;
+            //Debug.WriteLine(Properties.Settings.Default.randomcount);
             webClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
             webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", Properties.Settings.Default.AuthString);
             Stream stream = webClient.OpenRead(Properties.Settings.Default.URI);
@@ -93,7 +95,9 @@ namespace DDNS_Updater
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            UpdateTimer.Interval = 5000;
+            UpdateTimer.Interval = Properties.Settings.Default.Intervalms;
+            lnklblActiveDomain.Text = Properties.Settings.Default.UpdUsrName + ".srtdyn.co.za";
+            lblUpdTime.Text = Convert.ToString(Properties.Settings.Default.IntervalMin) + " Minutes.";
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -149,6 +153,21 @@ namespace DDNS_Updater
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void tabPage1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pnlsettings.Visible = true;
+        }
+
+        private void lblHiddenDebug_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
