@@ -53,7 +53,7 @@ namespace DDNS_Updater
 
                 }
                 Program.Intervalsec = Convert.ToInt32(txtUpdate.Text);
-                Program.Intervalms = Program.Intervalsec * 1000;
+                Program.Intervalms = Program.Intervalsec * 60000;
                 UpdateTimer.Interval = Program.Intervalms;
             }
             txtUpdate.Text = string.Empty;
