@@ -47,59 +47,48 @@ namespace DDNS_Updater
                     }
                     else
                     {
-                        Program.UpdPWord = txtPassword.Text;
-                        Program.UpdUsrName = txtUsername.Text;
+                        Properties.Settings.Default.UpdPWord = txtPassword.Text;
+                        Properties.Settings.Default.UpdUsrName = txtUsername.Text;
                     }
 
                 }
-                Program.Intervalsec = Convert.ToInt32(txtUpdate.Text);
-                Program.Intervalms = Program.Intervalsec * 60000;
-                UpdateTimer.Interval = Program.Intervalms;
+                Properties.Settings.Default.Intervalsec = Convert.ToInt32(txtUpdate.Text);
+                //Update in seconds for Debugging Uncomment
+                //Properties.Settings.Default.Intervalms = Properties.Settings.Default.Intervalsec * 1000;
+                //update in min for Production uncomment
+                Properties.Settings.Default.Intervalms = Properties.Settings.Default.Intervalsec * 60000;
+                UpdateTimer.Interval = Properties.Settings.Default.Intervalms;
             }
             txtUpdate.Text = string.Empty;
-
-            Debug.WriteLine(Program.UpdPWord);
-            Debug.WriteLine(Program.UpdUsrName);
+            Debug.WriteLine(Properties.Settings.Default.UpdPWord);
+            Debug.WriteLine(Properties.Settings.Default.UpdUsrName);
+            Properties.Settings.Default.Save();
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
-
-            Program.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
-            lblPubIP.Text = Program.externIP;
+            Properties.Settings.Default.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
+            lblPubIP.Text = Properties.Settings.Default.externIP;
             WebClient webClient = new WebClient();
-            Program.URI = "http://@dyn.srtech.org.za";
-            Program.AuthString = Convert.ToBase64String(Encoding.ASCII.GetBytes(Program.UpdUsrName + ":" + Program.UpdPWord));
-            Debug.WriteLine(Program.URI);
+            //Properties.Settings.Default.URI = "http://@srtdyn.co.za"; Uncomment if Broken
+            Properties.Settings.Default.URI = "http://srtdyn.co.za"; //Comment if Broken
+            Properties.Settings.Default.AuthString = Convert.ToBase64String(Encoding.ASCII.GetBytes(Properties.Settings.Default.UpdUsrName + ":" + Properties.Settings.Default.UpdPWord));
+            Debug.WriteLine(Properties.Settings.Default.URI);
+            Properties.Settings.Default.count = Properties.Settings.Default.count + 1;
+            Debug.WriteLine(Properties.Settings.Default.count);
             webClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-            webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", Program.AuthString);
-            Stream stream = webClient.OpenRead(Program.URI);
-
-
-            //Program.URI = "http://@dyn.srtech.org.za";
-            //WebRequest request = WebRequest.Create(Program.URI);
-            //string authInfo = Program.UpdUsrName + ":" + Program.UpdPWord;
-            //authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
-            //request.Headers.Add("Authorization", "Basic " + authInfo);
-            //request.ContentType = "application/json";
-            //request.Method = WebRequestMethods.Http.Get;
-            //request.Proxy = null;
-            //HttpWebResponse httpWebResponse = (HttpWebResponse)request.GetResponse();
-            //HttpWebResponse response = httpWebResponse;
-            //Stream stream = response.GetResponseStream();
-            //StreamReader streamreader = new StreamReader(stream);
-            //string s = streamreader.ReadToEnd();
-            //lblUpdate_Output.Text = s;
+            webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", Properties.Settings.Default.AuthString);
+            Stream stream = webClient.OpenRead(Properties.Settings.Default.URI);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            label3.Text = "";
-            Program.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
-            lblPubIP.Text = Program.externIP;
+            lblHiddenDebug.Text = "";
+            Properties.Settings.Default.externIP = (new WebClient()).DownloadString("https://ipv4.icanhazip.com/");
+            lblPubIP.Text = Properties.Settings.Default.externIP;
             WebClient webClient = new WebClient();
-            Program.URI = "http://" + Program.UpdUsrName + ":" + Program.UpdPWord + "@dyn.srtech.org.za";
-            label3.Text = Program.URI;
+            Properties.Settings.Default.URI = "http://" + Properties.Settings.Default.UpdUsrName + ":" + Properties.Settings.Default.UpdPWord + "@srtdyn.co.za";
+            lblHiddenDebug.Text = Properties.Settings.Default.URI;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -109,7 +98,7 @@ namespace DDNS_Updater
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty (Program.UpdUsrName))
+            if (string.IsNullOrEmpty (Properties.Settings.Default.UpdUsrName))
             {
                 string message = "Please Check the Settings";
                 MessageBox.Show(message);
@@ -137,19 +126,29 @@ namespace DDNS_Updater
 
         private void label2_DoubleClick(object sender, EventArgs e)
         {
-            label3.Visible = true;
-            button1.Visible = true;
+            lblHiddenDebug.Visible = true;
+            btnDebug.Visible = true;
         }
 
         private void label3_DoubleClick(object sender, EventArgs e)
         {
-            label3.Visible = false;
-            button1.Visible = false;
+            lblHiddenDebug.Visible = false;
+            btnDebug.Visible = false;
         }
 
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void lblDomain_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
