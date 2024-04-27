@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Net;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Net.Http;
-using System.Diagnostics;
+using System.Net;
+using System.Text;
+using System.Windows.Forms;
 
 
 
@@ -64,7 +55,7 @@ namespace DDNS_Updater
             //Debug.WriteLine(Properties.Settings.Default.UpdPWord);
             //Debug.WriteLine(Properties.Settings.Default.UpdUsrName);
             Properties.Settings.Default.Save();
-            
+
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -102,7 +93,7 @@ namespace DDNS_Updater
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty (Properties.Settings.Default.UpdUsrName))
+            if (string.IsNullOrEmpty(Properties.Settings.Default.UpdUsrName))
             {
                 string message = "Please Check the Settings";
                 MessageBox.Show(message);
@@ -110,12 +101,25 @@ namespace DDNS_Updater
             else
             {
                 UpdateTimer.Enabled = true;
+                WebClient webClient = new WebClient();
+                Properties.Settings.Default.URI = "http://srtdyn.co.za"; //Comment if Broken
+                Properties.Settings.Default.AuthString = Convert.ToBase64String(Encoding.ASCII.GetBytes(Properties.Settings.Default.UpdUsrName + ":" + Properties.Settings.Default.UpdPWord));
+                //Debug.WriteLine(Properties.Settings.Default.URI);
+                Properties.Settings.Default.randomcount = Properties.Settings.Default.randomcount + 1;
+                //Debug.WriteLine(Properties.Settings.Default.randomcount);
+                webClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+                webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Basic {0}", Properties.Settings.Default.AuthString);
+                Stream stream = webClient.OpenRead(Properties.Settings.Default.URI);
+                btnStop.Enabled = true;
+                btnStart.Enabled = false;
             }
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             UpdateTimer.Enabled = false;
+            btnStart.Enabled = true;
+            btnStop.Enabled = false;
         }
 
         private void label5_Click(object sender, EventArgs e)
